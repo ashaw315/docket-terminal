@@ -67,6 +67,28 @@ export async function POST(req: Request): Promise<Response> {
       })
     }
 
+    const existing = await prisma.card.findMany({
+      where: { projectId: project.id },
+      select: { title: true },
+    })
+    const existingTitles = new Set(existing.map((c) => c.title.toUpperCase()))
+
+    const newTasks = tasks.filter((t) => !existingTitles.has(t.title.toUpperCase()))
+
+    if (newTasks.length === 0) {
+      return NextResponse.json(
+        {
+          data: {
+            projectId: project.id,
+            project: project.name,
+            created: 0,
+            skipped: tasks.length,
+          },
+        },
+        { status: 201 }
+      )
+    }
+
     const lastByColumn = new Map<CardColumn, string | null>()
     for (const col of Object.values(CardColumn)) {
       const last = await prisma.card.findFirst({
@@ -77,7 +99,7 @@ export async function POST(req: Request): Promise<Response> {
       lastByColumn.set(col, last?.position ?? null)
     }
 
-    const cardsData = tasks.map((t) => {
+    const cardsData = newTasks.map((t) => {
       const col = columnMap[t.column]
       const prev = lastByColumn.get(col) ?? null
       const position = generateKeyBetween(prev, null)
@@ -95,7 +117,14 @@ export async function POST(req: Request): Promise<Response> {
     await prisma.card.createMany({ data: cardsData })
 
     return NextResponse.json(
-      { data: { projectId: project.id, project: project.name, created: cardsData.length } },
+      {
+        data: {
+          projectId: project.id,
+          project: project.name,
+          created: cardsData.length,
+          skipped: tasks.length - cardsData.length,
+        },
+      },
       { status: 201 }
     )
   } catch {

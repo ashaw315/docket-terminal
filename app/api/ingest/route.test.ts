@@ -8,6 +8,7 @@ vi.mock('@/lib/prisma', () => ({
     },
     card: {
       findFirst: vi.fn(),
+      findMany: vi.fn(),
       createMany: vi.fn(),
     },
   },
@@ -38,6 +39,7 @@ describe('POST /api/ingest', () => {
     ;(prisma.project.findFirst as MockedFn).mockResolvedValueOnce(null) // not found → create
     ;(prisma.project.findFirst as MockedFn).mockResolvedValueOnce({ position: 'a0' }) // last position lookup
     ;(prisma.project.create as MockedFn).mockResolvedValue({ id: 'p1', name: 'NewProj' })
+    ;(prisma.card.findMany as MockedFn).mockResolvedValue([]) // no existing cards
     ;(prisma.card.findFirst as MockedFn).mockResolvedValue(null) // no existing cards in any column
     ;(prisma.card.createMany as MockedFn).mockResolvedValue({ count: 2 })
 
@@ -103,6 +105,7 @@ describe('POST /api/ingest', () => {
 
   it('reuses an existing project (case-insensitive) rather than creating a duplicate', async () => {
     ;(prisma.project.findFirst as MockedFn).mockResolvedValueOnce({ id: 'p-existing', name: 'Existing' })
+    ;(prisma.card.findMany as MockedFn).mockResolvedValue([]) // no existing titles
     ;(prisma.card.findFirst as MockedFn).mockResolvedValue(null)
     ;(prisma.card.createMany as MockedFn).mockResolvedValue({ count: 1 })
 
@@ -121,5 +124,67 @@ describe('POST /api/ingest', () => {
     expect(res.status).toBe(201)
     expect(body.data.projectId).toBe('p-existing')
     expect(prisma.project.create).not.toHaveBeenCalled()
+  })
+
+  it('skips tasks whose title already exists on the project (case-insensitive)', async () => {
+    ;(prisma.project.findFirst as MockedFn).mockResolvedValueOnce({ id: 'p-existing', name: 'Existing' })
+    ;(prisma.card.findMany as MockedFn).mockResolvedValue([
+      { title: 'One' },
+      { title: 'two' },
+    ])
+    ;(prisma.card.findFirst as MockedFn).mockResolvedValue(null)
+
+    const POST = await loadPOST()
+    const req = new Request('http://localhost/api/ingest', {
+      method: 'POST',
+      headers: authHeaders('secret-token'),
+      body: JSON.stringify({
+        project: 'Existing',
+        tasks: [
+          { title: 'ONE', column: 'todo' }, // duplicate of 'One'
+          { title: 'Two', column: 'todo' }, // duplicate of 'two'
+        ],
+      }),
+    })
+    const res = await POST(req)
+    const body = await res.json()
+
+    expect(res.status).toBe(201)
+    expect(body.data).toMatchObject({
+      projectId: 'p-existing',
+      project: 'Existing',
+      created: 0,
+      skipped: 2,
+    })
+    expect(prisma.card.createMany).not.toHaveBeenCalled()
+  })
+
+  it('inserts only the new tasks when the payload has partial overlap with existing titles', async () => {
+    ;(prisma.project.findFirst as MockedFn).mockResolvedValueOnce({ id: 'p-existing', name: 'Existing' })
+    ;(prisma.card.findMany as MockedFn).mockResolvedValue([{ title: 'One' }])
+    ;(prisma.card.findFirst as MockedFn).mockResolvedValue(null)
+    ;(prisma.card.createMany as MockedFn).mockResolvedValue({ count: 1 })
+
+    const POST = await loadPOST()
+    const req = new Request('http://localhost/api/ingest', {
+      method: 'POST',
+      headers: authHeaders('secret-token'),
+      body: JSON.stringify({
+        project: 'Existing',
+        tasks: [
+          { title: 'one', column: 'todo' }, // duplicate
+          { title: 'Two', column: 'todo' }, // new
+        ],
+      }),
+    })
+    const res = await POST(req)
+    const body = await res.json()
+
+    expect(res.status).toBe(201)
+    expect(body.data).toMatchObject({ created: 1, skipped: 1 })
+    expect(prisma.card.createMany).toHaveBeenCalledTimes(1)
+    const createManyArg = (prisma.card.createMany as MockedFn).mock.calls[0][0]
+    expect(createManyArg.data).toHaveLength(1)
+    expect(createManyArg.data[0].title).toBe('Two')
   })
 })
