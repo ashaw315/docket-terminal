@@ -5,7 +5,10 @@ export default function Loading() {
         <h1 className="font-mono text-xs uppercase tracking-[0.2em] text-zinc-500">
           DOCKET TERMINAL
         </h1>
-        <span className="font-mono text-xs uppercase text-zinc-700">ARCHIVE →</span>
+        <div className="flex items-baseline gap-4">
+          <span className="font-mono text-xs uppercase text-zinc-700">ARCHIVE →</span>
+          <span className="font-mono text-xs uppercase text-zinc-700">LOGOUT →</span>
+        </div>
       </header>
 
       <div className="mb-6 flex items-baseline justify-between">
