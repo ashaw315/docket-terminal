@@ -13,6 +13,7 @@ type Props = {
   projectColor: string
   onCardCreated: (card: Card) => void
   onCardOpen: (card: Card) => void
+  onCardExpand?: (card: Card) => void
 }
 
 const LABELS: Record<CardColumn, string> = {
@@ -28,6 +29,7 @@ export function KanbanColumn({
   projectColor,
   onCardCreated,
   onCardOpen,
+  onCardExpand,
 }: Props) {
   const { setNodeRef, isOver } = useDroppable({ id: column, data: { column } })
   const label = LABELS[column]
@@ -55,6 +57,7 @@ export function KanbanColumn({
               card={card}
               projectColor={projectColor}
               onOpen={onCardOpen}
+              onExpand={onCardExpand}
             />
           ))}
         </SortableContext>

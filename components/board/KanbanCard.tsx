@@ -8,9 +8,10 @@ type Props = {
   card: Card
   projectColor: string
   onOpen: (card: Card) => void
+  onExpand?: (card: Card) => void
 }
 
-export function KanbanCard({ card, projectColor, onOpen }: Props) {
+export function KanbanCard({ card, projectColor, onOpen, onExpand }: Props) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: card.id,
     data: { column: card.column },
@@ -46,12 +47,27 @@ export function KanbanCard({ card, projectColor, onOpen }: Props) {
           <h3 className="min-w-0 break-words font-mono text-sm uppercase tracking-tight text-zinc-100">
             {card.title}
           </h3>
-          <span
-            aria-hidden
-            className="shrink-0 select-none font-mono text-xs text-zinc-700 opacity-0 transition-opacity duration-150 group-hover:opacity-100"
-          >
-            ⠿
-          </span>
+          <div className="flex shrink-0 items-center gap-2 opacity-0 transition-opacity duration-150 group-hover:opacity-100 focus-within:opacity-100">
+            {onExpand ? (
+              <button
+                type="button"
+                onPointerDown={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onExpand(card)
+                }}
+                className="font-mono text-[10px] uppercase tracking-wide text-zinc-600 hover:text-zinc-300 transition-colors duration-150"
+              >
+                EXPAND
+              </button>
+            ) : null}
+            <span
+              aria-hidden
+              className="select-none font-mono text-xs text-zinc-700"
+            >
+              ⠿
+            </span>
+          </div>
         </div>
 
         {card.url ? (

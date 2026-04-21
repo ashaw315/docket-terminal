@@ -13,6 +13,7 @@ import { generateKeyBetween } from 'fractional-indexing'
 import type { BoardState, Card, CardColumn, Project } from '@/types'
 import { KanbanColumn } from './KanbanColumn'
 import { CardDetailModal } from './CardDetailModal'
+import { ExpandCardModal } from './ExpandCardModal'
 
 type Props = {
   project: Project
@@ -35,6 +36,7 @@ function findCardColumn(board: BoardState, id: string): CardColumn | null {
 export function KanbanBoard({ project, initialBoard }: Props) {
   const [board, setBoard] = useState<BoardState>(initialBoard)
   const [detailCard, setDetailCard] = useState<Card | null>(null)
+  const [expandingCard, setExpandingCard] = useState<Card | null>(null)
   const [boardError, setBoardError] = useState<string | null>(null)
   const snapshotRef = useRef<BoardState | null>(null)
 
@@ -47,6 +49,62 @@ export function KanbanBoard({ project, initialBoard }: Props) {
   }, [])
 
   const handleCardOpen = useCallback((card: Card) => setDetailCard(card), [])
+
+  const handleCardExpand = useCallback((card: Card) => setExpandingCard(card), [])
+
+  const fetchExpandSuggestions = useCallback(
+    async (input: {
+      card: Card
+      projectName: string
+      boardContext: { TODO: string[]; IN_PROGRESS: string[]; DONE: string[] }
+    }): Promise<string[]> => {
+      const res = await fetch('/api/ai/expand-card', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          cardId: input.card.id,
+          cardTitle: input.card.title,
+          cardNotes: input.card.notes ?? undefined,
+          column: input.card.column,
+          projectName: input.projectName,
+          boardContext: input.boardContext,
+        }),
+      })
+      if (!res.ok) throw new Error('expand failed')
+      const body = await res.json()
+      if (!body?.data?.suggestions || !Array.isArray(body.data.suggestions)) {
+        throw new Error('bad response')
+      }
+      return body.data.suggestions as string[]
+    },
+    []
+  )
+
+  const handleExpandAdd = useCallback(
+    async (titles: string[], column: CardColumn) => {
+      const snapshot = board
+      const createdCards: Card[] = []
+      try {
+        for (const title of titles) {
+          const res = await fetch(`/api/projects/${project.id}/cards`, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ title, column }),
+          })
+          if (!res.ok) throw new Error('create failed')
+          const body = await res.json()
+          const card = body.data as Card
+          createdCards.push(card)
+          setBoard((prev) => ({ ...prev, [column]: [...prev[column], card] }))
+        }
+      } catch {
+        setBoard(snapshot)
+        setBoardError('Could not add suggested cards')
+        throw new Error('add failed')
+      }
+    },
+    [board, project.id]
+  )
 
   const handleCardUpdated = useCallback((updated: Card) => {
     setBoard((prev) => {
@@ -176,6 +234,7 @@ export function KanbanBoard({ project, initialBoard }: Props) {
               projectColor={project.color ?? '#3f3f46'}
               onCardCreated={handleCardCreated(col)}
               onCardOpen={handleCardOpen}
+              onCardExpand={handleCardExpand}
             />
           ))}
         </div>
@@ -188,6 +247,17 @@ export function KanbanBoard({ project, initialBoard }: Props) {
         onUpdated={handleCardUpdated}
         onDeleted={handleCardDeleted}
       />
+
+      {expandingCard && (
+        <ExpandCardModal
+          card={expandingCard}
+          projectName={project.name}
+          boardContext={board}
+          fetchSuggestions={fetchExpandSuggestions}
+          onAdd={handleExpandAdd}
+          onClose={() => setExpandingCard(null)}
+        />
+      )}
     </div>
   )
 }
