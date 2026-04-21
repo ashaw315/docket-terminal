@@ -4,6 +4,8 @@ export type { Project, Card, ProjectStatus, CardColumn }
 
 export type ProjectWithCards = Project & { cards: Card[] }
 
+export type ProjectWithCount = Project & { _count: { cards: number } }
+
 export type CardWithProject = Card & { project: Project }
 
 export type Column = 'TODO' | 'IN_PROGRESS' | 'DONE'
