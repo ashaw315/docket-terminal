@@ -7,6 +7,7 @@ export default function Loading() {
         </h1>
         <div className="flex items-baseline gap-3">
           <span className="font-mono text-xs uppercase text-zinc-700">GENERATE →</span>
+          <span className="font-mono text-xs uppercase text-zinc-700">GUIDE →</span>
           <span className="font-mono text-xs uppercase text-zinc-700">NEW PROJECT</span>
           <span className="font-mono text-xs uppercase text-zinc-700">ARCHIVE →</span>
           <span className="font-mono text-xs uppercase text-zinc-700">LOGOUT →</span>

@@ -29,6 +29,12 @@ export function HomeHeaderActions() {
       >
         Generate →
       </button>
+      <Link
+        href="/guide"
+        className="font-mono text-xs uppercase text-zinc-600 hover:text-zinc-400 transition-colors duration-150"
+      >
+        GUIDE →
+      </Link>
       <button
         type="button"
         onClick={() => setCreateOpen(true)}
