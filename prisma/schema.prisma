@@ -14,7 +14,7 @@ model Project {
   description String?
   status      ProjectStatus @default(ACTIVE)
   color       String?
-  position    Float         @default(0)
+  position    String        @default("a0")
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   cards       Card[]
@@ -32,7 +32,7 @@ model Card {
   notes     String?
   url       String?
   column    CardColumn @default(TODO)
-  position  Float
+  position  String
   projectId String
   project   Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
   createdAt DateTime   @default(now())
