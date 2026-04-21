@@ -33,7 +33,7 @@ export function KanbanCard({ card, projectColor, onOpen }: Props) {
       onClick={() => {
         if (!isDragging) onOpen(card)
       }}
-      className="group relative flex cursor-pointer border border-zinc-800 bg-zinc-900 transition-colors duration-150 hover:bg-zinc-800"
+      className="group relative flex cursor-pointer border border-zinc-700 bg-zinc-900 transition-colors duration-150 hover:bg-zinc-800"
     >
       <div
         data-testid="kanban-card-accent"
@@ -43,7 +43,7 @@ export function KanbanCard({ card, projectColor, onOpen }: Props) {
 
       <div className="flex min-w-0 flex-1 flex-col gap-1 p-3">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="min-w-0 break-words font-mono text-sm text-zinc-100">
+          <h3 className="min-w-0 break-words font-mono text-sm uppercase tracking-tight text-zinc-100">
             {card.title}
           </h3>
           <span

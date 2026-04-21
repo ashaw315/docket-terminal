@@ -115,9 +115,10 @@ export function ProjectCard({ project }: Props) {
           </p>
         ) : null}
 
-        <div className="mt-2 flex items-center justify-between font-mono text-xs">
-          <span className="text-zinc-600">{project._count.cards} CARDS</span>
-          <span className="text-zinc-700">OPENED {formatOpened(project.createdAt)}</span>
+        <div className="mt-2 flex items-center gap-2 font-mono text-xs text-zinc-600">
+          <span>{project._count.cards} CARDS</span>
+          <span aria-hidden>·</span>
+          <span>OPENED {formatOpened(project.createdAt)}</span>
         </div>
 
         {renameError && (

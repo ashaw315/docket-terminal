@@ -59,7 +59,7 @@ export function CardCreateInline({ projectId, column, onCreated }: Props) {
       <button
         type="button"
         onClick={() => setExpanded(true)}
-        className="w-full border border-dashed border-zinc-800 px-3 py-2 text-left font-mono text-xs uppercase text-zinc-600 hover:border-zinc-700 hover:bg-zinc-900 hover:text-zinc-400 transition-colors duration-150"
+        className="w-full border border-dashed border-zinc-800 px-3 py-2 text-left font-mono text-xs uppercase text-zinc-600 hover:border-zinc-600 hover:bg-zinc-900 hover:text-zinc-400 transition-colors duration-150"
       >
         + Add Card
       </button>

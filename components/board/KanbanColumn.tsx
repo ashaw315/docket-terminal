@@ -41,10 +41,10 @@ export function KanbanColumn({
       }
     >
       <header className="flex items-baseline justify-between border-b border-zinc-800 px-4 py-3">
-        <h2 className="font-mono text-xs uppercase tracking-[0.2em] text-zinc-500">
+        <h2 className="font-mono text-xs uppercase tracking-[0.2em] text-zinc-400">
           {label}
         </h2>
-        <span className="font-mono text-xs text-zinc-700">{cards.length}</span>
+        <span className="font-mono text-xs text-zinc-500">{cards.length}</span>
       </header>
 
       <div className="flex flex-1 flex-col gap-2 p-3">

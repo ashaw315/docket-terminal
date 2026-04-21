@@ -21,7 +21,7 @@ export function ProjectGrid({ projects }: Props) {
         <button
           type="button"
           onClick={() => setModalOpen(true)}
-          className="border border-zinc-700 px-3 py-1 font-mono text-xs uppercase tracking-wide text-zinc-200 hover:bg-zinc-800 transition-colors duration-150"
+          className="border border-zinc-600 px-3 py-1 font-mono text-xs uppercase tracking-wide text-zinc-300 hover:text-zinc-100 hover:border-zinc-400 hover:bg-zinc-800 transition-colors duration-150"
         >
           New Project
         </button>

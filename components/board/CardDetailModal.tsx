@@ -120,7 +120,7 @@ export function CardDetailModal({ card, open, onClose, onUpdated, onDeleted }: P
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             maxLength={255}
-            className="border border-zinc-800 bg-zinc-950 px-2 py-1 font-mono text-sm text-zinc-100 focus:border-zinc-600 focus:outline-none"
+            className="border border-zinc-700 bg-zinc-950 px-2 py-1 font-mono text-sm text-zinc-100 focus:border-zinc-500 focus:outline-none"
           />
         </label>
 
@@ -130,7 +130,7 @@ export function CardDetailModal({ card, open, onClose, onUpdated, onDeleted }: P
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             rows={6}
-            className="resize-none border border-zinc-800 bg-zinc-950 px-2 py-1 font-mono text-xs text-zinc-100 focus:border-zinc-600 focus:outline-none"
+            className="resize-none border border-zinc-700 bg-zinc-950 px-2 py-1 font-mono text-xs text-zinc-100 focus:border-zinc-500 focus:outline-none"
           />
         </label>
 
@@ -139,8 +139,8 @@ export function CardDetailModal({ card, open, onClose, onUpdated, onDeleted }: P
           <input
             value={url}
             onChange={(e) => setUrl(e.target.value)}
-            placeholder="https://…"
-            className="border border-zinc-800 bg-zinc-950 px-2 py-1 font-mono text-xs text-zinc-100 focus:border-zinc-600 focus:outline-none"
+            placeholder="https://..."
+            className="border border-zinc-700 bg-zinc-950 px-2 py-1 font-mono text-xs text-zinc-100 focus:border-zinc-500 focus:outline-none"
           />
         </label>
 
