@@ -158,7 +158,7 @@ export function ExpandCardModal({
                 />
                 <label
                   htmlFor={`sugg-${s}`}
-                  className="min-w-0 break-words font-mono text-sm text-zinc-100"
+                  className="min-w-0 break-words font-mono text-sm uppercase tracking-tight text-zinc-100"
                 >
                   {s}
                 </label>

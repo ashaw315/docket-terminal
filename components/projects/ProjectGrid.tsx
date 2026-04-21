@@ -14,17 +14,10 @@ export function ProjectGrid({ projects }: Props) {
 
   return (
     <>
-      <div className="mb-6 flex items-baseline justify-between">
+      <div className="mb-6 flex items-baseline">
         <span className="font-mono text-xs uppercase text-zinc-500">
           {projects.length} {projects.length === 1 ? 'PROJECT' : 'PROJECTS'}
         </span>
-        <button
-          type="button"
-          onClick={() => setModalOpen(true)}
-          className="border border-zinc-600 px-3 py-1 font-mono text-xs uppercase tracking-wide text-zinc-300 hover:text-zinc-100 hover:border-zinc-400 hover:bg-zinc-800 transition-colors duration-150"
-        >
-          New Project
-        </button>
       </div>
 
       {projects.length === 0 ? (

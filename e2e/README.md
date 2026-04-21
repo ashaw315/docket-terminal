@@ -10,6 +10,11 @@ npx playwright test
 
 ## AI routes are unit-tested only
 
-`POST /api/ai/expand-card` calls the Anthropic API. Mocking that end-to-end in Playwright is fragile and expensive, so it's covered by Vitest (`app/api/ai/expand-card/route.test.ts`) with the SDK mocked via `vi.mock('@anthropic-ai/sdk')`. The `ExpandCardModal` component is also unit-tested with a stubbed `fetchSuggestions` (`components/board/ExpandCardModal.test.tsx`).
+AI-backed routes call the Anthropic API. Mocking that end-to-end in Playwright is fragile and expensive, so they're covered by Vitest with the SDK mocked via `vi.mock('@anthropic-ai/sdk')`:
 
-If you need to manually smoke-test the AI flow end-to-end, log in, click EXPAND on a card, and confirm the suggestions appear and can be added to the board.
+- `POST /api/ai/expand-card` — see `app/api/ai/expand-card/route.test.ts`
+- `POST /api/ai/generate-board` — see `app/api/ai/generate-board/route.test.ts`
+
+The corresponding UI components (`ExpandCardModal`, `GenerateBoardModal`) are unit-tested with an injected AI function (`fetchSuggestions`, `generate`).
+
+If you need to manually smoke-test end-to-end: log in, click EXPAND on a card, or GENERATE in the page header, and verify the flow.

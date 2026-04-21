@@ -1,7 +1,7 @@
-import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import type { ProjectWithCount } from '@/types'
 import { ProjectGrid } from '@/components/projects/ProjectGrid'
+import { HomeHeaderActions } from '@/components/projects/HomeHeaderActions'
 
 export const dynamic = 'force-dynamic'
 
@@ -18,20 +18,7 @@ export default async function Home() {
         <h1 className="font-mono text-xs uppercase tracking-[0.2em] text-zinc-500">
           DOCKET TERMINAL
         </h1>
-        <div className="flex items-baseline gap-4">
-          <Link
-            href="/archive"
-            className="font-mono text-xs uppercase text-zinc-600 hover:text-zinc-400 transition-colors duration-150"
-          >
-            ARCHIVE →
-          </Link>
-          <a
-            href="/api/auth/logout"
-            className="font-mono text-xs uppercase text-zinc-600 hover:text-zinc-400 transition-colors duration-150"
-          >
-            LOGOUT →
-          </a>
-        </div>
+        <HomeHeaderActions />
       </header>
 
       <ProjectGrid projects={projects} />
